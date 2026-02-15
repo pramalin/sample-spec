@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tags - ContactHub</title>
+  <link rel="stylesheet" href="/styles/main.css">
+</head>
+<body>
+  <div id="app">
+    <header>
+      <h1>ContactHub</h1>
+      <nav>
+        <a href="/pages/contacts.html">Contacts</a>
+        <a href="/pages/categories.html">Categories</a>
+        <a href="/pages/tags.html" class="active">Tags</a>
+      </nav>
+    </header>
+    <main>
+      <div class="page-header">
+        <h2>Tags</h2>
+        <button id="addTagBtn" class="btn">Add Tag</button>
+      </div>
+      
+      <div id="tagsList" class="tag-list"></div>
+      <div id="loading" class="loading" style="display: none;">Loading tags...</div>
+    </main>
+  </div>
+
+  <div id="tagModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="modalTitle">Add Tag</h3>
+        <button class="modal-close" id="closeModal">&times;</button>
+      </div>
+      <form id="tagForm">
+        <input type="hidden" id="tagId">
+        <div class="form-group">
+          <label for="name">Name *</label>
+          <input type="text" id="name" name="name" required maxlength="50">
+        </div>
+        <div class="form-actions">
+          <button type="button" class="btn btn-secondary" id="cancelBtn">Cancel</button>
+          <button type="submit" class="btn">Save</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script type="module">
+    import * as tagsApi from '/services/tags.js';
+
+    document.addEventListener('DOMContentLoaded', () => {
+      loadTags();
+      setupEventListeners();
+    });
+
+    function setupEventListeners() {
+      document.getElementById('addTagBtn').addEventListener('click', () => openModal());
+      document.getElementById('closeModal').addEventListener('click', closeModal);
+      document.getElementById('cancelBtn').addEventListener('click', closeModal);
+      document.getElementById('tagForm').addEventListener('submit', handleSubmit);
+      document.getElementById('tagModal').addEventListener('click', (e) => {
+        if (e.target.id === 'tagModal') closeModal();
+      });
+    }
+
+    async function loadTags() {
+      document.getElementById('loading').style.display = 'block';
+      try {
+        const tags = await tagsApi.getTags();
+        renderTags(tags);
+      } catch (error) {
+        showError(error.message);
+      } finally {
+        document.getElementById('loading').style.display = 'none';
+      }
+    }
+
+    function renderTags(tags) {
+      const container = document.getElementById('tagsList');
+      if (!tags.length) {
+        container.innerHTML = '<p class="empty-state">No tags yet. Create your first tag!</p>';
+        return;
+      }
+      
+      container.innerHTML = tags.map(tag => `
+        <div class="card" data-id="${tag.id}">
+          <div class="tag-info">
+            <span class="tag-badge">${escapeHtml(tag.name)}</span>
+          </div>
+          <div class="card-actions">
+            <button class="btn btn-secondary edit-btn" data-id="${tag.id}">Edit</button>
+            <button class="btn btn-danger delete-btn" data-id="${tag.id}">Delete</button>
+          </div>
+        </div>
+      `).join('');
+
+      container.querySelectorAll('.edit-btn').forEach(btn => {
+        btn.addEventListener('click', () => editTag(btn.dataset.id));
+      });
+      container.querySelectorAll('.delete-btn').forEach(btn => {
+        btn.addEventListener('click', () => deleteTag(btn.dataset.id));
+      });
+    }
+
+    function openModal(tag = null) {
+      const modal = document.getElementById('tagModal');
+      const title = document.getElementById('modalTitle');
+      if (tag) {
+        title.textContent = 'Edit Tag';
+        document.getElementById('tagId').value = tag.id;
+        document.getElementById('name').value = tag.name;
+      } else {
+        title.textContent = 'Add Tag';
+        document.getElementById('tagForm').reset();
+        document.getElementById('tagId').value = '';
+      }
+      modal.classList.add('active');
+    }
+
+    function closeModal() {
+      document.getElementById('tagModal').classList.remove('active');
+    }
+
+    async function editTag(id) {
+      const tags = await tagsApi.getTags();
+      const tag = tags.find(t => t.id === id);
+      if (tag) openModal(tag);
+    }
+
+    async function deleteTag(id) {
+      if (!confirm('Are you sure?')) return;
+      try {
+        await tagsApi.deleteTag(id);
+        loadTags();
+      } catch (error) {
+        showError(error.message);
+      }
+    }
+
+    async function handleSubmit(e) {
+      e.preventDefault();
+      const id = document.getElementById('tagId').value;
+      const tag = { name: document.getElementById('name').value };
+      try {
+        if (id) await tagsApi.updateTag(id, tag);
+        else await tagsApi.createTag(tag);
+        closeModal();
+        loadTags();
+      } catch (error) {
+        showError(error.message);
+      }
+    }
+
+    function showError(message) {
+      document.getElementById('tagsList').innerHTML = `<div class="error">${escapeHtml(message)}</div>`;
+    }
+
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+  </script>
+</body>
+</html>

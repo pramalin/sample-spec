@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Categories - ContactHub</title>
+  <link rel="stylesheet" href="/styles/main.css">
+</head>
+<body>
+  <div id="app">
+    <header>
+      <h1>ContactHub</h1>
+      <nav>
+        <a href="/pages/contacts.html">Contacts</a>
+        <a href="/pages/categories.html" class="active">Categories</a>
+        <a href="/pages/tags.html">Tags</a>
+      </nav>
+    </header>
+    <main>
+      <div class="page-header">
+        <h2>Categories</h2>
+        <button id="addCategoryBtn" class="btn">Add Category</button>
+      </div>
+      
+      <div id="categoriesList" class="category-list"></div>
+      <div id="loading" class="loading" style="display: none;">Loading categories...</div>
+    </main>
+  </div>
+
+  <div id="categoryModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="modalTitle">Add Category</h3>
+        <button class="modal-close" id="closeModal">&times;</button>
+      </div>
+      <form id="categoryForm">
+        <input type="hidden" id="categoryId">
+        <div class="form-group">
+          <label for="name">Name *</label>
+          <input type="text" id="name" name="name" required maxlength="100">
+        </div>
+        <div class="form-group">
+          <label for="color">Color</label>
+          <input type="text" id="color" name="color" maxlength="20" placeholder="#3b82f6">
+        </div>
+        <div class="form-actions">
+          <button type="button" class="btn btn-secondary" id="cancelBtn">Cancel</button>
+          <button type="submit" class="btn">Save</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script type="module">
+    import * as categoriesApi from '/services/categories.js';
+
+    document.addEventListener('DOMContentLoaded', () => {
+      loadCategories();
+      setupEventListeners();
+    });
+
+    function setupEventListeners() {
+      document.getElementById('addCategoryBtn').addEventListener('click', () => openModal());
+      document.getElementById('closeModal').addEventListener('click', closeModal);
+      document.getElementById('cancelBtn').addEventListener('click', closeModal);
+      document.getElementById('categoryForm').addEventListener('submit', handleSubmit);
+      document.getElementById('categoryModal').addEventListener('click', (e) => {
+        if (e.target.id === 'categoryModal') closeModal();
+      });
+    }
+
+    async function loadCategories() {
+      document.getElementById('loading').style.display = 'block';
+      try {
+        const categories = await categoriesApi.getCategories();
+        renderCategories(categories);
+      } catch (error) {
+        showError(error.message);
+      } finally {
+        document.getElementById('loading').style.display = 'none';
+      }
+    }
+
+    function renderCategories(categories) {
+      const container = document.getElementById('categoriesList');
+      if (!categories.length) {
+        container.innerHTML = '<p class="empty-state">No categories yet. Create your first category!</p>';
+        return;
+      }
+      
+      container.innerHTML = categories.map(cat => `
+        <div class="card" data-id="${cat.id}">
+          <div class="category-info">
+            <span class="category-color" style="background-color: ${cat.color || '#64748b'}"></span>
+            <h3>${escapeHtml(cat.name)}</h3>
+          </div>
+          <div class="card-actions">
+            <button class="btn btn-secondary edit-btn" data-id="${cat.id}">Edit</button>
+            <button class="btn btn-danger delete-btn" data-id="${cat.id}">Delete</button>
+          </div>
+        </div>
+      `).join('');
+
+      container.querySelectorAll('.edit-btn').forEach(btn => {
+        btn.addEventListener('click', () => editCategory(btn.dataset.id));
+      });
+      container.querySelectorAll('.delete-btn').forEach(btn => {
+        btn.addEventListener('click', () => deleteCategory(btn.dataset.id));
+      });
+    }
+
+    function openModal(category = null) {
+      const modal = document.getElementById('categoryModal');
+      const title = document.getElementById('modalTitle');
+      if (category) {
+        title.textContent = 'Edit Category';
+        document.getElementById('categoryId').value = category.id;
+        document.getElementById('name').value = category.name;
+        document.getElementById('color').value = category.color || '';
+      } else {
+        title.textContent = 'Add Category';
+        document.getElementById('categoryForm').reset();
+        document.getElementById('categoryId').value = '';
+      }
+      modal.classList.add('active');
+    }
+
+    function closeModal() {
+      document.getElementById('categoryModal').classList.remove('active');
+    }
+
+    async function editCategory(id) {
+      const categories = await categoriesApi.getCategories();
+      const category = categories.find(c => c.id === id);
+      if (category) openModal(category);
+    }
+
+    async function deleteCategory(id) {
+      if (!confirm('Are you sure?')) return;
+      try {
+        await categoriesApi.deleteCategory(id);
+        loadCategories();
+      } catch (error) {
+        showError(error.message);
+      }
+    }
+
+    async function handleSubmit(e) {
+      e.preventDefault();
+      const id = document.getElementById('categoryId').value;
+      const category = {
+        name: document.getElementById('name').value,
+        color: document.getElementById('color').value || null,
+      };
+      try {
+        if (id) await categoriesApi.updateCategory(id, category);
+        else await categoriesApi.createCategory(category);
+        closeModal();
+        loadCategories();
+      } catch (error) {
+        showError(error.message);
+      }
+    }
+
+    function showError(message) {
+      document.getElementById('categoriesList').innerHTML = `<div class="error">${escapeHtml(message)}</div>`;
+    }
+
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+  </script>
+</body>
+</html>

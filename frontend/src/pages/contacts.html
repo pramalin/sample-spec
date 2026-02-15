@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contacts - ContactHub</title>
+  <link rel="stylesheet" href="/styles/main.css">
+  <link rel="stylesheet" href="/styles/contacts.css">
+</head>
+<body>
+  <div id="app">
+    <header>
+      <h1>ContactHub</h1>
+      <nav>
+        <a href="/pages/contacts.html" class="active">Contacts</a>
+        <a href="/pages/categories.html">Categories</a>
+        <a href="/pages/tags.html">Tags</a>
+      </nav>
+    </header>
+    <main>
+      <div class="page-header">
+        <h2>Contacts</h2>
+        <button id="addContactBtn" class="btn">Add Contact</button>
+      </div>
+      
+      <div class="search-bar">
+        <input type="text" id="searchInput" placeholder="Search contacts by name, email, or phone...">
+        <button id="searchBtn" class="btn">Search</button>
+      </div>
+      
+      <div id="contactsList" class="contact-list"></div>
+      
+      <div id="loading" class="loading" style="display: none;">Loading contacts...</div>
+      
+      <div id="pagination" class="pagination"></div>
+    </main>
+  </div>
+
+  <div id="contactModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="modalTitle">Add Contact</h3>
+        <button class="modal-close" id="closeModal">&times;</button>
+      </div>
+      <form id="contactForm">
+        <input type="hidden" id="contactId">
+        <div class="form-group">
+          <label for="name">Name *</label>
+          <input type="text" id="name" name="name" required maxlength="255">
+        </div>
+        <div class="form-group">
+          <label for="phone">Phone</label>
+          <input type="tel" id="phone" name="phone" maxlength="50">
+        </div>
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input type="email" id="email" name="email" maxlength="255">
+        </div>
+        <div class="form-group">
+          <label for="notes">Notes</label>
+          <textarea id="notes" name="notes" rows="4"></textarea>
+        </div>
+        <div class="form-actions">
+          <button type="button" class="btn btn-secondary" id="cancelBtn">Cancel</button>
+          <button type="submit" class="btn">Save</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script type="module" src="/components/contact-list.js"></script>
+</body>
+</html>

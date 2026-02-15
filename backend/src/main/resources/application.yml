@@ -1,0 +1,24 @@
+spring:
+  application:
+    name: contacthub
+  datasource:
+    url: jdbc:postgresql://db:5432/contacthub
+    username: contacthub
+    password: contacthub
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+
+server:
+  port: 8080
+
+logging:
+  level:
+    com.contacthub: INFO
+    org.springframework.web: INFO
