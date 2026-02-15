@@ -64,3 +64,25 @@ coverage/
 # Temporary files
 *.tmp
 *.temp
+
+# Scala / sbt
+*.lock
+project/boot/
+project/target/
+lib_managed/
+src_managed/
+history/
+.scala-build/
+.csbt.lock
+coursier/
+.bloop/
+.metals/
+.worksheets/
+
+# Rust
+debug/
+release/
+*.rs.bk
+*.rlib
+*.prof*
+

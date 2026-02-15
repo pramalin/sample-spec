@@ -219,3 +219,158 @@ With multiple developers:
 - Commit after each task or logical group
 - Stop at any checkpoint to validate story independently
 - Avoid: vague tasks, same file conflicts, cross-story dependencies that break independence
+
+---
+
+# Tasks: Scala 3 Tagless Final Backend (NEW Implementation)
+
+**Input**: Design documents from `/specs/001-contacthub/` for Scala 3 backend
+**Purpose**: New Scala 3 backend implementation with tagless final pattern and property-based tests
+
+**Tests**: Property-based tests with ScalaCheck are REQUIRED per plan.md
+
+**Organization**: Tasks are grouped by user story to enable independent implementation and testing
+
+## Format: `[ID] [P?] [Story] Description`
+
+- **[P]**: Can run in parallel (different files, no dependencies)
+- **[Story]**: Which user story this task belongs to (e.g., US1, US2, US3)
+- Include exact file paths in descriptions
+
+---
+
+## Phase S1: Scala Setup (Shared Infrastructure)
+
+**Purpose**: Initialize Scala 3 project with sbt and dependencies
+
+- [X] S001 Create Scala 3 project structure in src/main/scala/com/contacthub/
+- [X] S002 Initialize sbt project with build.sbt in scala-backend/
+- [X] S003 [P] Add Cats Effect, Doobie, Http4s, Circe, ScalaCheck dependencies to build.sbt
+- [X] S004 [P] Create project directory structure (domain/, service/, repository/, api/, config/)
+- [X] S005 Configure Scala 3 compiler options in build.sbt
+
+---
+
+## Phase S2: Scala Foundational (Blocking Prerequisites)
+
+**Purpose**: Core infrastructure for Scala backend
+
+- [X] S006 Create domain models (Contact, Category, Tag case classes) in src/main/scala/com/contacthub/domain/
+- [X] S007 [P] Define repository algebras (traits) in src/main/scala/com/contacthub/domain/
+- [X] S008 [P] Create service algebras in src/main/scala/com/contacthub/domain/
+- [X] S009 Setup Doobie database connection in src/main/scala/com/contacthub/repository/
+- [X] S010 Configure PostgreSQL connection in src/main/scala/com/contacthub/config/
+- [X] S011 Create HTTP server with Http4s in src/main/scala/com/contacthub/api/
+- [X] S012 Setup JSON serialization with Circe in src/main/scala/com/contacthub/api/
+- [X] S013 Configure error handling and logging in scala-backend/
+
+**Checkpoint**: Scala foundation ready - user story implementation can now begin
+
+---
+
+## Phase S3: User Story 1 - Add and Manage Contacts (Priority: P1) 🎯 MVP
+
+**Goal**: Users can add, view, edit, and delete contacts via Scala backend
+
+**Independent Test**: Add a contact with name, phone, and email via Scala API and verify it appears
+
+### Tests for User Story 1 (REQUIRED - Property-Based)
+
+- [X] S014 [P] [US1] Write property-based tests for Contact model in src/test/scala/com/contacthub/property/ContactPropertySpec.scala
+- [X] S015 [P] [US1] Write unit tests for Contact validation in src/test/scala/com/contacthub/unit/ContactValidationSpec.scala
+
+### Implementation for User Story 1
+
+- [ ] S016 [P] [US1] Implement ContactRepository algebra in src/main/scala/com/contacthub/domain/ContactRepository.scala
+- [ ] S017 [P] [US1] Implement DoobieContactRepository in src/main/scala/com/contacthub/repository/DoobieContactRepository.scala
+- [ ] S018 [US1] Implement ContactService in src/main/scala/com/contacthub/service/ContactService.scala
+- [ ] S019 [US1] Implement POST /api/contacts endpoint in src/main/scala/com/contacthub/api/ContactRoutes.scala
+- [ ] S020 [US1] Implement GET /api/contacts endpoint in src/main/scala/com/contacthub/api/ContactRoutes.scala
+- [ ] S021 [US1] Implement GET /api/contacts/{id} endpoint in src/main/scala/com/contacthub/api/ContactRoutes.scala
+- [ ] S022 [US1] Implement PUT /api/contacts/{id} endpoint in src/main/scala/com/contacthub/api/ContactRoutes.scala
+- [ ] S023 [US1] Implement DELETE /api/contacts/{id} endpoint in src/main/scala/com/contacthub/api/ContactRoutes.scala
+
+**Checkpoint**: User Story 1 should be fully functional and testable independently
+
+---
+
+## Phase S4: User Story 2 - Search and Filter Contacts (Priority: P2)
+
+**Goal**: Users can search and filter contacts via Scala backend
+
+**Independent Test**: Search for a contact by name via Scala API and verify results
+
+### Tests for User Story 2 (REQUIRED - Property-Based)
+
+- [ ] S024 [P] [US2] Write property-based tests for search functionality in src/test/scala/com/contacthub/property/SearchPropertySpec.scala
+
+### Implementation for User Story 2
+
+- [ ] S025 [P] [US2] Add search method to ContactRepository in src/main/scala/com/contacthub/domain/ContactRepository.scala
+- [ ] S026 [US2] Implement search in DoobieContactRepository in src/main/scala/com/contacthub/repository/DoobieContactRepository.scala
+- [ ] S027 [US2] Extend ContactService with search in src/main/scala/com/contacthub/service/ContactService.scala
+- [ ] S028 [US2] Implement GET /api/contacts/search endpoint in src/main/scala/com/contacthub/api/ContactRoutes.scala
+- [ ] S029 [US2] Add category/tag filter support to GET /api/contacts in src/main/scala/com/contacthub/api/ContactRoutes.scala
+
+**Checkpoint**: User Stories 1 AND 2 should both work independently
+
+---
+
+## Phase S5: User Story 3 - Organize Contacts with Categories and Tags (Priority: P3)
+
+**Goal**: Users can create and manage categories and tags via Scala backend
+
+**Independent Test**: Create categories and tags, assign to contacts, verify via API
+
+### Tests for User Story 3 (REQUIRED - Property-Based)
+
+- [X] S030 [P] [US3] Write property-based tests for Category model in src/test/scala/com/contacthub/property/CategoryPropertySpec.scala
+- [X] S031 [P] [US3] Write property-based tests for Tag model in src/test/scala/com/contacthub/property/TagPropertySpec.scala
+
+### Implementation for User Story 3
+
+- [ ] S032 [P] [US3] Implement CategoryRepository algebra in src/main/scala/com/contacthub/domain/CategoryRepository.scala
+- [ ] S033 [P] [US3] Implement TagRepository algebra in src/main/scala/com/contacthub/domain/TagRepository.scala
+- [ ] S034 [P] [US3] Implement DoobieCategoryRepository in src/main/scala/com/contacthub/repository/DoobieCategoryRepository.scala
+- [ ] S035 [P] [US3] Implement DoobieTagRepository in src/main/scala/com/contacthub/repository/DoobieTagRepository.scala
+- [ ] S036 [US3] Implement CategoryService in src/main/scala/com/contacthub/service/CategoryService.scala
+- [ ] S037 [US3] Implement TagService in src/main/scala/com/contacthub/service/TagService.scala
+- [ ] S038 [US3] Implement Category CRUD endpoints in src/main/scala/com/contacthub/api/CategoryRoutes.scala
+- [ ] S039 [US3] Implement Tag CRUD endpoints in src/main/scala/com/contacthub/api/TagRoutes.scala
+
+**Checkpoint**: All user stories should now be independently functional
+
+---
+
+## Phase S6: Polish & Integration
+
+**Purpose**: Complete integration between Scala and Java backends
+
+- [ ] S040 Run Scala backend on port 8081 (separate from Java backend on 8080)
+- [ ] S041 Verify both backends work with shared PostgreSQL database
+- [ ] S042 Compare API response times between Java and Scala backends
+- [ ] S043 Run all property-based tests and verify coverage
+- [ ] S044 Update quickstart.md with Scala backend instructions
+
+---
+
+## Dependencies & Execution Order
+
+### Phase Dependencies
+
+- **Scala Setup (Phase S1)**: No dependencies - can start immediately
+- **Scala Foundational (Phase S2)**: Depends on Setup - BLOCKS all user stories
+- **User Stories (Phase S3+)**: All depend on Foundational completion
+
+### Parallel Opportunities
+
+- All Setup tasks marked [P] can run in parallel
+- All Foundational tasks marked [P] can run in parallel
+- Property-based tests can run independently
+
+### Comparison Strategy
+
+The Scala backend runs on port 8081 alongside Java backend on 8080:
+- Both use same PostgreSQL database
+- Compare functionality and performance
+- Property-based tests provide additional coverage
