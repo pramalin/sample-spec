@@ -1,8 +1,7 @@
-# Sample Spec Project Constitution
+# Engineering Principles
 
-## Core Principles
+## 1. Code Quality Standards
 
-### 1. Code Quality Standards
 Every code contribution must meet the following non-negotiable requirements:
 - All code must be reviewed by at least one peer before merging
 - Code must pass all static analysis checks with zero warnings
@@ -13,7 +12,8 @@ Every code contribution must meet the following non-negotiable requirements:
 
 Rationale: Maintaining high code quality ensures long-term maintainability, reduces bugs, and makes collaboration more efficient across the team.
 
-### 2. Testing Standards
+## 2. Testing Standards
+
 All features must include comprehensive testing that covers:
 - Unit tests for all functions and components with 90%+ code coverage
 - Integration tests for critical workflows and API interactions
@@ -24,7 +24,8 @@ All features must include comprehensive testing that covers:
 
 Rationale: Comprehensive testing ensures software reliability, prevents regressions, and provides confidence for changes and releases.
 
-### 3. User Experience Consistency
+## 3. User Experience Consistency
+
 All user-facing components and interactions must:
 - Follow established design system guidelines
 - Maintain consistent visual language across all interfaces
@@ -35,7 +36,8 @@ All user-facing components and interactions must:
 
 Rationale: Consistent user experience improves usability, reduces learning curve, and ensures accessibility for all users.
 
-### 4. Performance Requirements
+## 4. Performance Requirements
+
 All features must meet defined performance benchmarks:
 - Page load times must be under 3 seconds for 95% of users
 - API response times must be under 200ms for 99% of requests
@@ -44,23 +46,3 @@ All features must meet defined performance benchmarks:
 - Performance testing must be part of the CI/CD pipeline
 
 Rationale: Performance directly impacts user satisfaction and business outcomes, so strict performance requirements ensure optimal user experience.
-
-## Additional Constraints
-- All code must follow the established style guides and linting rules
-- Security best practices must be implemented for all code
-- All dependencies must be regularly updated and monitored for vulnerabilities
-- Documentation must be provided for all new features and APIs
-
-## Development Workflow
-- All features must be developed in feature branches
-- Pull requests must include passing tests and code review approval
-- Code must be formatted consistently before committing
-- All changes must be documented in the changelog
-- Release versions follow semantic versioning principles
-
-## Governance
-The Constitution supersedes all other practices; Amendments require documentation, approval, migration plan, and consensus from core maintainers.
-
-All PRs/reviews must verify compliance; Complexity must be justified; Use [GUIDANCE_FILE] for runtime development guidance
-
-**Version**: 1.0.0 | **Ratified**: 2026-02-14 | **Last Amended**: 2026-02-14

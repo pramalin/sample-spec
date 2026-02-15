@@ -31,7 +31,10 @@
 
 *GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
 
-[Gates determined based on constitution file]
+- [ ] All code must meet quality standards (Code Quality Standards principle)
+- [ ] All features must include comprehensive testing (Testing Standards principle)
+- [ ] All user-facing components must follow design consistency guidelines (User Experience Consistency principle)
+- [ ] All features must meet defined performance benchmarks (Performance Requirements principle)
 
 ## Project Structure
 

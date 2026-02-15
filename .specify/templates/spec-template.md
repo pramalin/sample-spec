@@ -89,6 +89,10 @@
 - **FR-003**: Users MUST be able to [key interaction, e.g., "reset their password"]
 - **FR-004**: System MUST [data requirement, e.g., "persist user preferences"]
 - **FR-005**: System MUST [behavior, e.g., "log all security events"]
+- **FR-006**: System MUST meet performance requirements (Performance Requirements principle)
+- **FR-007**: System MUST follow code quality standards (Code Quality Standards principle)
+- **FR-008**: System MUST include comprehensive testing (Testing Standards principle)
+- **FR-009**: System MUST maintain user experience consistency (User Experience Consistency principle)
 
 *Example of marking unclear requirements:*
 
