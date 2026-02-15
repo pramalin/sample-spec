@@ -1,4 +1,4 @@
-FROM eclipse-temurin:25-jre-alpine AS builder
+FROM eclipse-temurin:25-jdk-alpine AS builder
 
 WORKDIR /app
 COPY pom.xml .
@@ -7,7 +7,7 @@ COPY src ./src
 RUN apk add --no-cache maven && \
     mvn clean package -DskipTests
 
-FROM eclipse-temurin:25-jre-alpine
+FROM eclipse-temurin:25-jdk-alpine
 
 WORKDIR /app
 

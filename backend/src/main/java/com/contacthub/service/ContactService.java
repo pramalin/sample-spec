@@ -62,8 +62,4 @@ public class ContactService {
     public List<ContactEntity> searchContacts(String query) {
         return contactRepository.search(query);
     }
-    
-    public Page<ContactEntity> getContactsByCategory(UUID categoryId, Pageable pageable) {
-        return contactRepository.findAllByCategoryId(categoryId, pageable);
-    }
 }

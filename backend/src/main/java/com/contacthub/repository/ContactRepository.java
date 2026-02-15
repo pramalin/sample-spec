@@ -22,8 +22,4 @@ public interface ContactRepository extends JpaRepository<ContactEntity, UUID> {
     
     @Query("SELECT c FROM ContactEntity c WHERE c.deletedAt IS NULL")
     Page<ContactEntity> findAllActive(Pageable pageable);
-    
-    @Query("SELECT c FROM ContactEntity c WHERE c.deletedAt IS NULL AND " +
-           "(:categoryId IS NULL OR EXISTS (SELECT 1 FROM c.categories cat WHERE cat.id = :categoryId))")
-    Page<ContactEntity> findAllByCategoryId(UUID categoryId, Pageable pageable);
 }
