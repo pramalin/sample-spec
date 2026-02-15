@@ -123,3 +123,63 @@ CREATE INDEX idx_contacts_deleted_at ON contacts(deleted_at);
 CREATE INDEX idx_categories_name ON categories(name);
 CREATE INDEX idx_tags_name ON tags(name);
 ```
+
+## Scala 3 Domain Models
+
+The Scala 3 implementation uses case classes and enums for domain modeling:
+
+```scala
+// Domain models in src/main/scala/com/contacthub/domain/
+
+case class Contact(
+  id: UUID,
+  name: String,
+  phone: Option[String],
+  email: Option[String],
+  notes: Option[String],
+  categoryIds: List[UUID],
+  tagIds: List[UUID],
+  createdAt: Instant,
+  updatedAt: Instant,
+  deletedAt: Option[Instant]
+)
+
+case class Category(
+  id: UUID,
+  name: String,
+  color: Option[String],
+  createdAt: Instant
+)
+
+case class Tag(
+  id: UUID,
+  name: String,
+  createdAt: Instant
+)
+```
+
+### Tagless Final Algebras (Interfaces)
+
+```scala
+// Repository algebras (type classes)
+
+trait ContactRepository[F[_]]:
+  def findAll: F[List[Contact]]
+  def findById(id: UUID): F[Option[Contact]]
+  def search(query: String): F[List[Contact]]
+  def create(contact: Contact): F[Contact]
+  def update(contact: Contact): F[Contact]
+  def delete(id: UUID): F[Unit]
+
+trait CategoryRepository[F[_]]:
+  def findAll: F[List[Category]]
+  def findById(id: UUID): F[Option[Category]]
+  def create(category: Category): F[Category]
+  def delete(id: UUID): F[Unit]
+
+trait TagRepository[F[_]]:
+  def findAll: F[List[Tag]]
+  def findById(id: UUID): F[Option[Tag]]
+  def create(tag: Tag): F[Tag]
+  def delete(id: UUID): F[Unit]
+```

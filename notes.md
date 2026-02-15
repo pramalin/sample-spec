@@ -25,7 +25,7 @@ Verified that the frontend and backend projects compile.
 However running  'docker compose up' failed with the following error.
 
 
-'''log
+'''txt
 28.98 [INFO] Recompiling the module because of changed source code.
 29.00 [INFO] Compiling 16 source files with javac [debug parameters release 25] to target/classes
 29.00 [INFO] -------------------------------------------------------------
@@ -53,3 +53,6 @@ After few more prompts about this error, the issue was fixed.
 Credit is at $9.15.
 
 ### End
+
+### Scala 3 backend
+Created plan for Scala Scala 3 tagless final style backend

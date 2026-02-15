@@ -1,31 +1,31 @@
-# Implementation Plan: ContactHub
+# Implementation Plan: ContactHub (Scala 3 Backend)
 
-**Branch**: `001-contacthub` | **Date**: 2026-02-14 | **Spec**: /specs/001-contacthub/spec.md
-**Input**: Feature specification from `/specs/[###-feature-name]/spec.md`
+**Branch**: `001-contacthub` | **Date**: 2026-02-15 | **Spec**: /specs/001-contacthub/spec.md
+**Input**: Feature specification from `/specs/001-contacthub/spec.md`
 
-**Note**: This template is filled in by the `/speckit.plan` command. See `.specify/templates/commands/plan.md` for the execution workflow.
+**Note**: This plan covers a new Scala 3 backend implementation in tagless final style with property-based tests for comparison against the existing Java/Spring Boot implementation.
 
 ## Summary
 
-This feature will implement a contact management application with three tiers: frontend (Vite with vanilla JS/HTML/CSS), backend (Spring Boot 4 with Java 25 using functional programming style), and PostgreSQL database. The application will allow users to add, manage, search, and organize contacts with categories and tags. Docker images will be created for all tiers with a docker-compose configuration to run the application locally.
+Reimplement the ContactHub backend using Scala 3 with tagless final pattern and property-based testing. This new implementation will serve as a comparison point to evaluate the pros and cons of Scala 3 functional programming approach versus the existing Java 25/Spring Boot implementation.
 
 ## Technical Context
 
-<!--
-  ACTION REQUIRED: Replace the content in this section with the technical details
-  for the project. The structure here is presented in advisory capacity to guide
-  the iteration process.
--->
-
-**Language/Version**: Java 25, Vite 5, PostgreSQL 15  
-**Primary Dependencies**: Spring Boot 4, Vanilla JS, HTML, CSS  
-**Storage**: PostgreSQL 15  
-**Testing**: JUnit 5, Jest, Cypress  
-**Target Platform**: Web browser, Linux server  
-**Project Type**: Web application (frontend + backend)  
-**Performance Goals**: Page load under 3s, API response under 200ms  
-**Constraints**: <100MB memory usage, 60fps animations, responsive UI  
-**Scale/Scope**: 10k users, 1M LOC, 50 screens
+**Language/Version**: Scala 3.5
+**Primary Dependencies**: 
+- Cats Effect (IO monad for tagless final)
+- Doobie (pure functional JDBC)
+- Http4s (typeful HTTP server)
+- Circe (JSON serialization)
+- ScalaCheck (property-based testing)
+- ScalaTest + Cats Effect Testing (testing)
+**Storage**: PostgreSQL 15 (existing)
+**Testing**: ScalaTest, ScalaCheck, cats-effect-testing
+**Target Platform**: Linux server
+**Project Type**: Backend API (new project for comparison)
+**Performance Goals**: API response times under 200ms p99 (matching existing)
+**Constraints**: Pure functional programming, tagless final pattern, type-safe error handling
+**Scale/Scope**: Single backend service, ~10k contacts expected
 
 ## Constitution Check
 
@@ -35,6 +35,12 @@ This feature will implement a contact management application with three tiers: f
 - [x] All features must include comprehensive testing (Testing Standards principle)
 - [x] All user-facing components must follow design consistency guidelines (User Experience Consistency principle)
 - [x] All features must meet defined performance benchmarks (Performance Requirements principle)
+
+**Constitution Compliance**: This Scala 3 implementation will use:
+- Scala 3's strict type system and enums for code quality
+- Property-based testing (ScalaCheck) for comprehensive test coverage
+- Tagless final pattern for pure functional, testable code
+- Cats Effect for async/concurrent performance
 
 ## Project Structure
 
@@ -53,48 +59,37 @@ specs/[###-feature]/
 ### Source Code (repository root)
 
 ```text
-# [REMOVE IF UNUSED] Option 1: Single project (DEFAULT)
+# Scala 3 Backend (new project for comparison)
 src/
-├── models/
-├── services/
-├── cli/
-└── lib/
+├── main/
+│   └── scala/
+│       └── com/
+│           └── contacthub/
+│               ├── domain/           # Domain models and algebras
+│               ├── service/          # Business logic (tagless final)
+│               ├── repository/       # Data access layer
+│               ├── api/              # HTTP routes
+│               └── config/           # Configuration
+└── test/
+    └── scala/
+        └── com/
+            └── contacthub/
+                ├── unit/             # Unit tests
+                ├── property/         # Property-based tests (ScalaCheck)
+                └── integration/     # Integration tests
 
-tests/
-├── contract/
-├── integration/
-└── unit/
-
-# [REMOVE IF UNUSED] Option 2: Web application (when "frontend" + "backend" detected)
+# Existing Java/Spring Boot backend (unchanged)
 backend/
 ├── src/
-│   ├── models/
-│   ├── services/
-│   └── api/
-└── tests/
-
-frontend/
-├── src/
-│   ├── components/
-│   ├── pages/
-│   └── services/
-└── tests/
-
-# [REMOVE IF UNUSED] Option 3: Mobile + API (when "iOS/Android" detected)
-api/
-└── [same as backend above]
-
-ios/ or android/
-└── [platform-specific structure: feature modules, UI flows, platform tests]
+│   └── [existing structure]
 ```
-
-**Structure Decision**: Web application structure selected with separate frontend and backend directories
 
 ## Complexity Tracking
 
 > **Fill ONLY if Constitution Check has violations that must be justified**
 
-| Violation | Why Needed | Simpler Alternative Rejected Because |
-|-----------|------------|-------------------------------------|
-| [e.g., 4th project] | [current need] | [why 3 projects insufficient] |
-| [e.g., Repository pattern] | [specific problem] | [why direct DB access insufficient] |
+No violations. The Scala 3 tagless final implementation maintains all Constitution principles:
+- Code quality through Scala 3's type system and cats-effect
+- Testing through property-based testing (ScalaCheck) + unit tests
+- Backend-only (no user-facing components, so UX principles apply to existing frontend)
+- Performance through Cats Effect's async runtime

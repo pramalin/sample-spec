@@ -126,13 +126,124 @@ sample-spec/
 │   │   └── services/      # API services
 │   ├── Dockerfile         # Frontend Docker image
 │   └── package.json
-├── backend/               # Spring Boot backend
+├── backend/               # Spring Boot backend (Java 25)
 │   ├── src/
 │   │   └── main/
 │   │       ├── java/      # Java source code
 │   │       └── resources/ # Configuration
 │   ├── Dockerfile         # Backend Docker image
 │   └── pom.xml
+├── scala-backend/         # Scala 3 backend (NEW - tagless final)
+│   ├── src/
+│   │   └── main/
+│   │       └── scala/    # Scala source code
+│   │           └── com/
+│   │               └── contacthub/
+│   │                   ├── domain/    # Domain models & algebras
+│   │                   ├── service/   # Business logic
+│   │                   ├── repository/ # Data access
+│   │                   └── api/        # HTTP routes
+│   ├── build.sbt
+│   └── project/
 └── db/                    # Database scripts
     └── init.sql           # Database initialization
+```
+
+---
+
+# Scala 3 Backend Quickstart (New Implementation)
+
+This is a new Scala 3 implementation using tagless final pattern for comparison with the existing Java backend.
+
+## Prerequisites (Scala 3)
+
+- Java 21+ (for Scala 3.5)
+- sbt 1.9+
+- Docker (for PostgreSQL)
+
+## Running Scala Backend
+
+### 1. Start PostgreSQL
+
+```bash
+docker run -d \
+  --name contacthub-db \
+  -e POSTGRES_USER=contacthub \
+  -e POSTGRES_PASSWORD=contacthub \
+  -e POSTGRES_DB=contacthub \
+  -p 5432:5432 \
+  postgres:15
+```
+
+### 2. Run the Scala backend
+
+```bash
+cd scala-backend
+sbt run
+```
+
+The Scala backend runs on port 8081 (to avoid conflict with Java backend on 8080).
+
+### 3. Run tests including property-based tests
+
+```bash
+cd scala-backend
+sbt test
+```
+
+To run only property-based tests:
+
+```bash
+sbt "testOnly *PropertyBased*"
+```
+
+## Project Structure
+
+```
+scala-backend/
+├── src/
+│   ├── main/
+│   │   └── scala/com/contacthub/
+│   │       ├── domain/           # Case classes and algebras
+│   │       ├── service/          # Business logic (tagless final)
+│   │       ├── repository/       # Doobie implementations
+│   │       ├── api/              # Http4s routes
+│   │       └── config/           # Configuration
+│   └── test/
+│       └── scala/com/contacthub/
+│           ├── unit/             # Unit tests
+│           ├── property/         # ScalaCheck property tests
+│           └── integration/      # Integration tests
+├── build.sbt
+└── project/
+```
+
+## Testing with ScalaCheck
+
+The Scala 3 implementation includes property-based tests:
+
+```scala
+// Example property-based test
+import org.scalacheck.Properties
+import org.scalacheck.Prop.forAll
+
+object ContactPropertySpec extends Properties("Contact") {
+  
+  property("contact name is not empty") = forAll { contact: Contact =>
+    contact.name.nonEmpty
+  }
+  
+  property("email format is valid when present") = forAll { contact: Contact =>
+    contact.email.forall(isValidEmail)
+  }
+}
+```
+
+## Compare Both Backends
+
+Run both backends simultaneously:
+- **Java Backend**: http://localhost:8080
+- **Scala Backend**: http://localhost:8081
+
+Both connect to the same PostgreSQL database for comparison.
 ```

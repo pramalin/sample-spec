@@ -96,3 +96,58 @@
 2. **Testing**: JUnit 5 for backend, Jest for frontend, Cypress for E2E
 3. **Performance**: Virtual threads in Java 25, connection pooling
 4. **Security**: Input validation, parameterized queries, HTTPS in production
+
+---
+
+# Research: Scala 3 Tagless Final Backend (New Implementation)
+
+## Technical Decisions
+
+### Decision 1: Tagless Final Pattern with Cats Effect
+- **Decision**: Use Scala 3 tagless final pattern with Cats Effect for effect abstraction
+- **Rationale**: Tagless final allows writing pure functional code while remaining polymorphic over the effect type; Cats Effect provides well-established IO monad with resource safety; Scala 3's implicit resolution improvements make tagless final more ergonomic
+- **Alternatives considered**:
+  - ZIO: More feature-rich but steeper learning curve
+  - Monix: Good but less community momentum than Cats Effect
+
+### Decision 2: Database Access - Doobie
+- **Decision**: Use Doobie for pure functional JDBC access
+- **Rationale**: Pure functional JDBC operations via Cats Effect; type-safe query building with connection pooling
+- **Alternatives considered**:
+  - skunk: Pure functional but less mature than Doobie
+  - Quill: Complex macro-based approach, harder to debug
+
+### Decision 3: HTTP Server - Http4s
+- **Decision**: Use Http4s for REST API
+- **Rationale**: Typeful HTTP server matching tagless final philosophy; built on Cats Effect/Blaze
+- **Alternatives considered**:
+  - Akka HTTP: Heavy, complex, not purely functional
+  - Play: Imperative style, not FP-native
+
+### Decision 4: Property-Based Testing - ScalaCheck
+- **Decision**: Use ScalaCheck with ScalaTest integration
+- **Rationale**: Standard property-based testing library for Scala; can generate arbitrary instances for domain models
+- **Alternatives considered**:
+  - Hedgehog: Good but newer, less community resources
+  - purecheck: Interesting but less mature
+
+### Decision 5: JSON Serialization - Circe
+- **Decision**: Use Circe for JSON
+- **Rationale**: Standard JSON library in Scala ecosystem; automatic derivation of codecs; pure functional style
+
+## Comparison: Java vs Scala 3
+
+| Aspect | Java 25/Spring Boot | Scala 3 Tagless Final |
+|--------|---------------------|----------------------|
+| Type System | Strong, records/sealed | Stronger, enums, union types |
+| Effect Handling | Reactive (Project Reactor) | IO Monad (Cats Effect) |
+| Testing | JUnit 5, MockMvc | ScalaCheck (PBT), ScalaTest |
+| Learning Curve | Lower | Higher |
+| Boilerplate | More | Less with metaprogramming |
+| Performance | Virtual threads | Fibers (Cats Effect) |
+
+## Shared Components
+
+- PostgreSQL 15 database (shared between implementations)
+- Both backends can run on different ports for A/B comparison
+- REST API contracts remain compatible

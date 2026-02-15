@@ -3,6 +3,8 @@
 Auto-generated from all feature plans. Last updated: 2026-02-14
 
 ## Active Technologies
+- Scala 3.5 (001-contacthub)
+- PostgreSQL 15 (existing) (001-contacthub)
 
 - Java 25, Vite 5, PostgreSQL 15 + Spring Boot 4, Vanilla JS, HTML, CSS (001-contacthub)
 
@@ -22,6 +24,7 @@ tests/
 Java 25, Vite 5, PostgreSQL 15: Follow standard conventions
 
 ## Recent Changes
+- 001-contacthub: Added Scala 3.5
 
 - 001-contacthub: Added Java 25, Vite 5, PostgreSQL 15 + Spring Boot 4, Vanilla JS, HTML, CSS
 
